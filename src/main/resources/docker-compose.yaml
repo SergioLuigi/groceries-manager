@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+
+  mongo:
+    image: mongo
+    container_name: ${MONGO_DATABASE}
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+    ports:
+      - ${MONGO_PORT}:27017
+    volumes:
+      #- ./mongo-bootstrap.js:/docker-entrypoint-initdb.d/mongo-bootstrap.js:ro
+      - ~/Projetos/Volumes/groceries-manager:/data/
+
+# mongosh -u root -p root --authenticationDatabase admin

@@ -1,0 +1,14 @@
+server:
+  error:
+    include-message: always
+
+spring:
+  data:
+    mongodb:
+      host: ${MONGO_HOST}
+      port: ${MONGO_PORT}
+      authentication-database: admin
+      database: ${MONGO_DATABASE}
+      username: ${MONGO_USERNAME}
+      password: ${MONGO_PASSWORD}
+
