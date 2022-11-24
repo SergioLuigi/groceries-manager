@@ -4,31 +4,32 @@ import br.com.sergioluigi.groceriesmanager.domain.exception.GroceriesManagerExce
 import br.com.sergioluigi.groceriesmanager.domain.model.Product;
 import br.com.sergioluigi.groceriesmanager.domain.usecase.ports.in.ProductRegisterInPort;
 import br.com.sergioluigi.groceriesmanager.domain.usecase.ports.out.ExistsProductByNameOutPort;
-import br.com.sergioluigi.groceriesmanager.domain.usecase.ports.out.ExistsTagByDescriptionInOutPort;
+import br.com.sergioluigi.groceriesmanager.domain.usecase.ports.out.FindAllTagsByDescriptionsOutPort;
 import br.com.sergioluigi.groceriesmanager.domain.usecase.ports.out.ProductRegisterOutPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.HashSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static br.com.sergioluigi.groceriesmanager.domain.exception.GroceriesManagerError.PRODUCT_ALREADY_EXISTS;
-import static br.com.sergioluigi.groceriesmanager.domain.exception.GroceriesManagerError.TAG_ALREADY_EXISTS;
+import static br.com.sergioluigi.groceriesmanager.domain.exception.GroceriesManagerError.*;
 
 @Slf4j
 @Component
 public class ProductRegisterUseCase implements ProductRegisterInPort {
     private final ExistsProductByNameOutPort existsProductByNameOutPort;
-    private final ExistsTagByDescriptionInOutPort existsTagByDescriptionInOutPort;
     private final ProductRegisterOutPort productRegisterOutPort;
 
+    private final FindAllTagsByDescriptionsOutPort findAllTagsByDescriptionsOutPort;
+
     public ProductRegisterUseCase(@Qualifier("ExistsProductByNameAdapter") final ExistsProductByNameOutPort existsProductByNameOutPort,
-                                  @Qualifier("ExistsTagByDescriptionInAdapter") final ExistsTagByDescriptionInOutPort existsTagByDescriptionInOutPort,
+                                  @Qualifier("FindAllTagsByDescriptionsAdapter") final FindAllTagsByDescriptionsOutPort findAllTagsByDescriptionsOutPort,
                                   @Qualifier("ProductRegisterAdapter") final ProductRegisterOutPort productRegisterOutPort){
         this.existsProductByNameOutPort = existsProductByNameOutPort;
-        this.existsTagByDescriptionInOutPort = existsTagByDescriptionInOutPort;
+        this.findAllTagsByDescriptionsOutPort = findAllTagsByDescriptionsOutPort;
         this.productRegisterOutPort = productRegisterOutPort;
     }
 
@@ -36,7 +37,7 @@ public class ProductRegisterUseCase implements ProductRegisterInPort {
     public Mono<Product> execute(Product product) {
         return Mono.just(product)
                 .map(mapUniqueProductNameOrThrow())
-                .doOnNext(validateTagsExistence())
+                .doOnNext(prepareTags())
                 .map(productRegisterOutPort::register)
                 .doOnSuccess(savedProduct -> log.info("DATA CREATED {}", savedProduct))
                 .doOnError(throwable -> log.error("ERROR: {}", throwable.getMessage()));
@@ -50,11 +51,13 @@ public class ProductRegisterUseCase implements ProductRegisterInPort {
         };
     }
 
-    private Consumer<Product> validateTagsExistence(){
-        return product ->{
+    private Consumer<Product> prepareTags(){
+        return product -> {
                 var descriptions = product.getTagDescriptions();
-                if (!existsTagByDescriptionInOutPort.existsTagByDescriptionIn(descriptions))
-                    throw new GroceriesManagerException(TAG_ALREADY_EXISTS);
+                var tags = findAllTagsByDescriptionsOutPort.findAllTagsByDescriptionIn(descriptions);
+                if (tags.isEmpty() || tags.size() != descriptions.size())
+                    throw new GroceriesManagerException(ONE_OR_MORE_TAGS_WERE_NOT_FOUND_DURING_PRODUCT_REGISTER);
+                product.setTags(new HashSet<>(tags));
             };
     }
 }

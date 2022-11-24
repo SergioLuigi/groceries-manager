@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Data
 public class ProductResponse {
 
-    private ObjectId id;
+    private String id;
 
     private String name;
 
@@ -30,6 +30,7 @@ public class ProductResponse {
         this.id = product.getId();
         this.name = product.getName();
         this.brand = product.getBrand();
+        this.value = product.getValue();
         this.measurementUnit = product.getMeasurementUnit();
         this.tags = product.getTags()
                 .stream()

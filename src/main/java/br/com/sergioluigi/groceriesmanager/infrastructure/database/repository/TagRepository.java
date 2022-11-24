@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TagRepository extends MongoRepository<TagDocument, ObjectId>{
 
@@ -16,6 +17,6 @@ public interface TagRepository extends MongoRepository<TagDocument, ObjectId>{
 
     Page<TagDocument> findByDescriptionStartingWithIgnoreCase(String description, Pageable pageable);
 
-
+    Set<TagDocument> findAllByDescriptionIn(List<String> descriptions);
 
 }

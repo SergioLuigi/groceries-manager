@@ -2,7 +2,6 @@ package br.com.sergioluigi.groceriesmanager.infrastructure.database.document;
 
 import br.com.sergioluigi.groceriesmanager.domain.model.MeasurementUnit;
 import br.com.sergioluigi.groceriesmanager.domain.model.Product;
-import br.com.sergioluigi.groceriesmanager.domain.model.Tag;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
@@ -11,6 +10,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductDocument {
 
-    @Id
-    private ObjectId id;
+    @MongoId
+    private String id;
 
     @Indexed(unique = true)
     private String name;
@@ -52,6 +52,7 @@ public class ProductDocument {
     @Transient
     public Product toProduct(){
         return Product.builder()
+                .id(this.id)
                 .name(this.name)
                 .brand(this.brand)
                 .measurementUnit(this.getMeasurementUnit())

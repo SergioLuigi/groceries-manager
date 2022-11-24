@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @RequiredArgsConstructor
 public class Tag {
 
-    private ObjectId id;
+    private String id;
 
     @NotBlank
     @Size(min = 3, max = 20)

@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 @Data
 public class TagResponse {
 
-    private ObjectId id;
+    private String id;
 
     private String description;
 

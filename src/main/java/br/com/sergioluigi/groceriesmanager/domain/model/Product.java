@@ -3,7 +3,7 @@ package br.com.sergioluigi.groceriesmanager.domain.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.bson.types.ObjectId;
+import lombok.Setter;
 import org.springframework.data.annotation.Transient;
 
 import javax.validation.Valid;
@@ -16,12 +16,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor
 public class Product {
 
-    private ObjectId id;
+    private String id;
 
     @NotBlank
     @Size(min = 3, max = 150)
