@@ -35,8 +35,6 @@ public class Product {
     @NotNull
     private MeasurementUnit measurementUnit;
 
-    //private Suplier suplier;
-
     @NotNull
     private BigDecimal value;
 
