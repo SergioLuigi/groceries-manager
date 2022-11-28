@@ -2,8 +2,8 @@ package br.com.sergioluigi.groceriesmanager.application.route.controller;
 
 import br.com.sergioluigi.groceriesmanager.application.route.dto.request.TagRegisterRequest;
 import br.com.sergioluigi.groceriesmanager.application.route.dto.response.TagResponse;
-import br.com.sergioluigi.groceriesmanager.domain.usecase.ports.in.FindTagPageByFirstThreeLettersInPort;
-import br.com.sergioluigi.groceriesmanager.domain.usecase.ports.in.TagRegisterInPort;
+import br.com.sergioluigi.groceriesmanager.domain.usecase.tag.ports.in.FindTagPageByFirstThreeLettersInPort;
+import br.com.sergioluigi.groceriesmanager.domain.usecase.tag.ports.in.TagRegisterInPort;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 
 @Validated
 @RestController
@@ -32,7 +33,7 @@ public class TagController {
     }
 
     @GetMapping
-    public Mono<Page<TagResponse>> findTagPageByDescriptionStartingWithIgnoreCase(@RequestParam("letters") String letters,
+    public Mono<Page<TagResponse>> findTagPageByDescriptionStartingWithIgnoreCase(@RequestParam("letters") @Valid @Size(min = 3) String letters,
                                                                                   @PageableDefault(sort = "description") Pageable pageable){
         return findTagPageByFirstThreeLettersInPort.execute(letters, pageable)
                 .map(page -> page.map(TagResponse::new));

@@ -1,9 +1,7 @@
 package br.com.sergioluigi.groceriesmanager.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
 
 import javax.validation.Valid;
@@ -19,10 +17,11 @@ import java.util.stream.Collectors;
 @Setter
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor
 public class Product {
 
-    private String id;
+    private ObjectId id;
 
     @NotBlank
     @Size(min = 3, max = 150)
@@ -47,7 +46,7 @@ public class Product {
                    String brand,
                    MeasurementUnit measurementUnit,
                    BigDecimal value,
-                   Set<@Valid Tag> tags) {
+                   Set<Tag> tags) {
         this.name = name;
         this.brand = brand;
         this.measurementUnit = measurementUnit;

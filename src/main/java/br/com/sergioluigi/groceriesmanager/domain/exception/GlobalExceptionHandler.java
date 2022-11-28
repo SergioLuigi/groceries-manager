@@ -16,7 +16,6 @@ import org.springframework.web.reactive.function.server.*;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -52,8 +51,8 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
             var messages = extractErrorMessages((WebExchangeBindException) exception);
             errorAttributesMap.put("message", "property value error");
             errorAttributesMap.put("propertiesErrors", messages);
-        }else if(exception instanceof ResponseStatusException){
-            var reason = ((ResponseStatusException) exception).getReason();
+        }else if(exception instanceof GroceriesManagerException){
+            var reason = ((GroceriesManagerException) exception).getReason();
             errorAttributesMap.put("message", reason);
         }else {
             errorAttributesMap.put("message", exception.getMessage());

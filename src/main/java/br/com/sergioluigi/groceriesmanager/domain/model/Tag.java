@@ -1,19 +1,19 @@
 package br.com.sergioluigi.groceriesmanager.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.bson.types.ObjectId;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
+@ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Tag {
 
-    private String id;
+    private ObjectId id;
 
     @NotBlank
     @Size(min = 3, max = 20)
