@@ -2,6 +2,7 @@ package br.com.sergioluigi.groceriesmanager.application.route.controller;
 
 import br.com.sergioluigi.groceriesmanager.application.route.dto.request.ProductRegisterRequest;
 import br.com.sergioluigi.groceriesmanager.application.route.dto.response.ProductResponse;
+import br.com.sergioluigi.groceriesmanager.domain.usecase.product.ports.in.FindProductByIdInPort;
 import br.com.sergioluigi.groceriesmanager.domain.usecase.product.ports.in.FindProductPageByFirstThreeLettersInPort;
 import br.com.sergioluigi.groceriesmanager.domain.usecase.product.ports.in.ProductRegisterInPort;
 import br.com.sergioluigi.groceriesmanager.domain.usecase.product.ports.in.ProductUpdateInport;
@@ -25,6 +26,8 @@ public class ProductController {
 
     private final ProductRegisterInPort productRegisterInPort;
 
+    private final FindProductByIdInPort findProductByIdInPort;
+
     private final FindProductPageByFirstThreeLettersInPort findProductPageByFirstThreeLettersInPort;
 
     private final ProductUpdateInport productUpdateInport;
@@ -32,6 +35,12 @@ public class ProductController {
     @PostMapping
     public Mono<ProductResponse> register(@RequestBody @Valid ProductRegisterRequest productRegisterRequest){
         return productRegisterInPort.execute(productRegisterRequest)
+                .map(ProductResponse::new);
+    }
+
+    @GetMapping("/{id}")
+    public Mono<ProductResponse> register(@PathVariable("id") ObjectId id){
+        return findProductByIdInPort.execute(id)
                 .map(ProductResponse::new);
     }
 
