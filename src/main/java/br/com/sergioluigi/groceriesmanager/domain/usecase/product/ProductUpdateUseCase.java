@@ -49,23 +49,21 @@ public class ProductUpdateUseCase implements ProductUpdateInport {
     }
 
     private Consumer<Product> uniqueProductNameOrThrow(String newProductName) {
-        return product1 -> {
-            findProductByNameOutPort.findProductByName(newProductName)
+        return product1 -> findProductByNameOutPort.findProductByName(newProductName)
                     .ifPresent(product2 -> {
                         if (!product1.getId().equals(product2.getId()) && product1.getName().equals(product2.getName())) {
                             throw new GroceriesManagerException(PRODUCT_ALREADY_EXISTS);
                         }
                     });
-                };
     }
 
-    private Consumer<Product> validateTagsOrThrow(Product updatedPooduct){
+    private Consumer<Product> validateTagsOrThrow(Product updatedProduct){
         return product -> {
-            var descriptions = updatedPooduct.getTagDescriptions();
+            var descriptions = updatedProduct.getTagDescriptions();
             var tags = findAllTagsByDescriptionsOutPort.findAllTagsByDescriptionIn(descriptions);
             if (tags.isEmpty() || tags.size() != descriptions.size())
                 throw new GroceriesManagerException(ONE_OR_MORE_TAGS_WERE_NOT_FOUND_DURING_PRODUCT_REGISTER);
-            updatedPooduct.setTags(tags);
+            updatedProduct.setTags(tags);
         };
     }
 }

@@ -8,6 +8,18 @@ group = 'br.com.sergioluigi'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'br.com.sergioluigi.groceriesmanager.GroceriesManagerApplication'
+		)
+	}
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -38,20 +50,5 @@ dependencies {
 	testImplementation 'org.testcontainers:kafka'
 	testImplementation 'org.testcontainers:mongodb'
 	compileOnly 'io.mongock:mongock-springboot:5.1.6'
-	implementation 'com.github.cloudyrock.mongock:mongock-spring-v5:4.3.8'
 	implementation 'com.github.cloudyrock.mongock:mongodb-springdata-v3-driver:4.3.8'
-
-
-
-
-}
-
-dependencyManagement {
-	imports {
-		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
-	}
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
 }
