@@ -1,8 +1,8 @@
 version: '3.9'
 
 services:
-  app:
-    image: groceries-manager
+  groceries-manager:
+    image: sergioluigi/groceries-manager:0.0.1
     container_name: groceries-manager
     restart: always
     build:
@@ -11,14 +11,15 @@ services:
     environment:
       SPRING_DATA_MONGODB_DATABASE: ${MONGO_DATABASE}
       SPRING_DATA_MONGODB_PASSWORD: ${MONGO_PASSWORD}
-      SPRING_DATA_MONGODB_HOST: ${MONGO_HOST}
+      SPRING_DATA_MONGODB_HOST: mongo #database service name
       SPRING_DATA_MONGODB_PORT: ${MONGO_PORT}
       SPRING_DATA_MONGODB_USERNAME: ${MONGO_USERNAME}
+      SERVER_PORT: 8080
     ports:
-      - "8081:8080"
+      - "8080:8080"
     depends_on:
       mongo:
-        condition: service_started
+        condition: service_healthy
     networks:
       - deploy-spring-boot-mongo
   mongo:
@@ -29,6 +30,12 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/${MONGO_DATABASE} --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     ports:
       - "27017"
     networks:
@@ -38,3 +45,4 @@ services:
       - ~/Projetos/Volumes/groceries-manager:/data/
 networks:
   deploy-spring-boot-mongo:
+    driver: bridge
